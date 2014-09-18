@@ -1,0 +1,19 @@
+<html>
+<body>
+<form method="POST" action="{% url 'view_basic_search' %}">
+        {% csrf_token %}
+    <table>
+    {{ search_form }}
+    </table>
+   <input type="submit" value="search" />
+
+</form>
+{% if search_results %}
+<p><b>{{ search_results.hit_count }}</b> result{{ search_results.hit_count|pluralize }} 
+found for <b>{{ search_term }}</b></p>
+    {% for doc in search_results.docs %}
+       {% include "search/vcard.html" %}
+    {% endfor %}
+{% endif %}
+</body>
+</html>

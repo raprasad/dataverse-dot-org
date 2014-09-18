@@ -1,9 +1,19 @@
 # Byte-compiled / optimized / DLL files
 __pycache__/
 *.py[cod]
-
+*.idea
 # C extensions
 *.so
+#
+# docs temporarily commented out
+#
+/docs/*
+/deploy/*
+/cron_scripts/*
+/test_setup/*
+/thedata/assets/*
+/thedata/thedata/settings/prod*
+/thedata/thedata/settings/*.json
 
 # Distribution / packaging
 .Python
