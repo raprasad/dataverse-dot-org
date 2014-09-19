@@ -2,7 +2,7 @@ from apps.search.solr_highlight_field_list import highlight_field_list
 from apps.search.solr_facet_field_list import DV_TYPE_VALUES, DVTYPE_KEY
 
 #DV_TYPE_VALUES = ( 'dataverses','datasets','files')
-DISPLAY_MODEL_NAMES = ('DataverseDisplay', 'DatasetDisplay', 'Datafile')
+DISPLAY_MODEL_NAMES = ('DataverseDisplay', 'DatasetDisplay', 'FileDisplay')
 DISPLAY_MODEL_DICT = dict(zip(DV_TYPE_VALUES, DISPLAY_MODEL_NAMES))
 
 class BasicDisplay(object):

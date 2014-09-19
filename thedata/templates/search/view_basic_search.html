@@ -13,8 +13,12 @@
                      {{ field }}</td>
             </tr>
         {% endfor %}
+        <tr>
+            <td><a href="{% url 'view_basic_search' %}">reset</a></td>
+            <td><input type="submit" value="search" /></td>
+        </tr>
     </table>
-   <input type="submit" value="search" />
+
 
 </form>
 {% if ERR_FOUND %}

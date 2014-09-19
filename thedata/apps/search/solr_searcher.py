@@ -25,13 +25,16 @@ class SolrSearcher:
             solr_server_timeout = settings.SOLR_SERVER_TIMEOUT_SECONDS
             
         self.num_display_rows = kwargs.get('num_display_rows', DEFAULT_NUM_DISPLAY_ROWS)
-        
-        
+        self.page_num = kwargs.get('page_num', DEFAULT_NUM_DISPLAY_ROWS)
+
         # initialize connection to solr
         self.solr_object = pysolr.Solr(solr_server_url, timeout=solr_server_timeout)
 
         # object to process solr results
-        self.searchFormatter = SolrSearchFormatter(**dict(num_display_rows=self.num_display_rows))
+        self.searchFormatter = SolrSearchFormatter(**dict(num_display_rows=self.num_display_rows\
+                                                        , page_num=2#self.page_num\
+                                                        )\
+                                                    )
         
         # err flags
         self.err_found = False

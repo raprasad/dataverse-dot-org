@@ -11,8 +11,15 @@ class SolrSearchFormatter:
         self.search_str = ''
         self.stats_on = kwargs.get('stats', 'true')
         self.debug = kwargs.get('debug', 'true')
-        self.result_start_offset = kwargs.get('result_start_offset', 0)
+
         self.num_display_rows = kwargs.get('num_display_rows', DEFAULT_NUM_DISPLAY_ROWS)
+        self.page_num = kwargs.get('page_num', 1)
+
+        self.result_start_offset = (self.page_num -1) * self.num_display_rows  # kwargs.get('result_start_offset', 0)
+
+        assert(self.page_num >= 1)
+        assert(self.num_display_rows >= 1)
+        assert(self.result_start_offset >= 0)
 
         self.highlight_start_tag = kwargs.get('highlight_start_tag', '<em>')
         self.highlight_end_tag = kwargs.get('highlight_end_tag', '</em>')
