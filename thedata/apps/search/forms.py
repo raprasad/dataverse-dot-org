@@ -19,7 +19,7 @@ class BasicSearchForm(forms.Form):
 
     pre_formatted_search_term = None
     search_term = forms.CharField(max_length=100)#, required=False)
-    
+    page_num = forms.IntegerField(initial=1, widget=forms.HiddenInput())
     #dv_type = forms.ChoiceField(label='DvObject Facet'\
     #                , choices=DV_TYPE_CHOICES\
     #                , widget=forms.CheckboxSelectMultiple(attrs={'class':'appt_choice cbox',})\

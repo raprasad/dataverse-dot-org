@@ -36,12 +36,7 @@ class DisplayPager:
         # to calculate
         self.page_count = 0
 
-        self.first_page = None
-        self.previous_page = None
-        
-        self.next_page = None
-        self.last_page = None
-
+      1
         self.page_menu_range = None
         
         self.pager_calculated = False

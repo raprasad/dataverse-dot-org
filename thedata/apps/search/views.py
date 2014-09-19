@@ -25,7 +25,7 @@ def get_search_results(num_display_rows, formatted_search_term):
     
 def view_basic_search(request):
 
-    num_display_rows = 7  
+    num_display_rows = 5  
     d = dict(num_display_rows=num_display_rows)
     
     if request.POST:
@@ -36,14 +36,15 @@ def view_basic_search(request):
             (success, search_results_or_err_msg) = get_search_results(num_display_rows\
                                 , search_form.cleaned_data['search_term']\
                             )
-            if not success:
+            if success:
+                d['search_results'] = search_results_or_err_msg
+                d['display_pager'] = search_results_or_err_msg.display_pager
+                #search_form = BasicSearchForm({ 'search_term' : search_form.pre_formatted_search_term })
+            else:
                 d['ERR_FOUND'] = True
                 d['ERR_Msg'] = search_results_or_err_msg
                 search_form = BasicSearchForm()
-            else:
-                d['search_results'] = search_results_or_err_msg
-                search_form = BasicSearchForm({ 'search_term' : search_form.pre_formatted_search_term })
-            #search_form = BasicSearchForm()
+            
     else:
         search_form = BasicSearchForm()
 

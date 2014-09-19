@@ -25,7 +25,8 @@ class SolrSearcher:
             solr_server_timeout = settings.SOLR_SERVER_TIMEOUT_SECONDS
             
         self.num_display_rows = kwargs.get('num_display_rows', DEFAULT_NUM_DISPLAY_ROWS)
-
+        
+        
         # initialize connection to solr
         self.solr_object = pysolr.Solr(solr_server_url, timeout=solr_server_timeout)
 

@@ -35,14 +35,13 @@ class SolrResultsHandler:
         self.docs = []
         self.hit_count = results.hits
         self.highlights_dict = {}  # { entityid: {} }
-        self.num_results = 0
         self.facet_groups = {}  # { name : FacetGroup }
     
         # process the results
         self.process_results(results)
         
         # prepare the pager
-        self.display_pager = DisplayPager(self.num_results, self.num_display_rows, result_start_offset)
+        self.display_pager = DisplayPager(self.hit_count, self.num_display_rows, result_start_offset)
     
     def get_current_page(self):
         return self.display_pager.current_page
@@ -57,7 +56,8 @@ class SolrResultsHandler:
         self.load_highlights_dict(results.highlighting)
         #self.show_facets()
         self.docs = self.format_docs(results.docs)
-    
+        self.num_results = self.get_num_display_docs()
+        
     def load_highlights_dict(self, hl_dict):
         return
         if not type(hl_dict) is dict:
