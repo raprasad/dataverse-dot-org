@@ -5,6 +5,7 @@ from solr_highlight_field_list import highlight_field_list
 from  pysolr import Results as PySolrResults
 
 from apps.dvcards.display_models import get_display_model
+from apps.dvcards.display_pager import DisplayPager
 
 CORE_FACET_GROUPS = ('dvtype', )
 
@@ -20,22 +21,41 @@ class FacetGroup:
         
 class SolrResultsHandler:
 
-    def __init__(self, results):
+    def __init__(self, results, num_display_rows, result_start_offset=0):
         if type(results) is not PySolrResults:
            raise TypeError('Expected pysolr.Results object.  Received: [%s]' % type(results))
-        print (results.docs)
+        #print (results.docs)
+
+        # already set
+        self.result_start_offset = result_start_offset
+        self.num_display_rows = num_display_rows
+        
+        # items to calculate from the results
         self.num_results = 0
         self.docs = []
         self.hit_count = results.hits
         self.highlights_dict = {}  # { entityid: {} }
         self.num_results = 0
         self.facet_groups = {}  # { name : FacetGroup }
+    
+        # process the results
         self.process_results(results)
         
+        # prepare the pager
+        self.display_pager = DisplayPager(self.num_results, self.num_display_rows, result_start_offset)
+    
+    def get_current_page(self):
+        return self.display_pager.current_page
+        
+    def get_num_display_docs(self):
+        if type(self.docs) is not list:
+            return 0
+        return len(self.docs)
+    
     def process_results(self, results):
         self.load_facets(results.facets)
         self.load_highlights_dict(results.highlighting)
-        self.show_facets()
+        #self.show_facets()
         self.docs = self.format_docs(results.docs)
     
     def load_highlights_dict(self, hl_dict):
@@ -44,11 +64,11 @@ class SolrResultsHandler:
             raise TypeError('exected a dict')
         #'dataset_38235_draft'
         for kval, val_dict in hl_dict.items():
-            print(kval)
+            #print(kval)
             for k, v in val_dict.items():
                 pass#print(k,v)
                 #self.highlights_dict
-        msgx('blah')
+        #msgx('blah')
 
     def format_docs(self, dict_list):
         if dict_list is None:
@@ -56,9 +76,9 @@ class SolrResultsHandler:
             
         l = []
         for d in dict_list:
-            msgt(d)
+            #msgt(d)
             display_object = get_display_model(d)
-            msgt(display_object.__class__.__name__)
+            #msgt(display_object.__class__.__name__)
             if display_object is not None:
                 l.append(display_object)
         if len(l) > 0:
@@ -76,7 +96,7 @@ class SolrResultsHandler:
             return
         
         for kval, val_dict in facets.items():   
-            msg('kval: %s\ndict: %s' % (kval, val_dict))
+            #msg('kval: %s\ndict: %s' % (kval, val_dict))
             if val_dict == {}:
                 continue        
             for facet_name, v in val_dict.items():

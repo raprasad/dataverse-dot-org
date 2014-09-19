@@ -12,29 +12,32 @@ from django.conf import settings
 
 from thedata.utils.msg_util import *
 
-from apps.search.solr_search_formatter import SolrSearchFormatter
+from apps.search.solr_search_formatter import SolrSearchFormatter, DEFAULT_NUM_DISPLAY_ROWS
 from apps.search.solr_results_handler import SolrResultsHandler
 
 
 class SolrSearcher:
     
-    def __init__(self, solr_server_url=None, solr_server_timeout=10):
+    def __init__(self, solr_server_url=None, solr_server_timeout=10, **kwargs):
         if solr_server_url is None:
             solr_server_url = settings.SOLR_SERVER_URL
         if solr_server_timeout is None:
             solr_server_timeout = settings.SOLR_SERVER_TIMEOUT_SECONDS
+            
+        self.num_display_rows = kwargs.get('num_display_rows', DEFAULT_NUM_DISPLAY_ROWS)
 
         # initialize connection to solr
         self.solr_object = pysolr.Solr(solr_server_url, timeout=solr_server_timeout)
 
         # object to process solr results
-        self.searchFormatter = SolrSearchFormatter(**dict(num_rows=10))
+        self.searchFormatter = SolrSearchFormatter(**dict(num_display_rows=self.num_display_rows))
         
         # err flags
         self.err_found = False
         self.err_msg = None
         
-    def reset_errs(self):
+        
+    def reset_search(self):
         self.err_found = False
         self.err_msg = None
         
@@ -44,34 +47,35 @@ class SolrSearcher:
         self.err_msg = err_msg
         
     def conduct_search(self, qstr, solr_kwargs=None):
-        msg('type: %s' % type(qstr))
-        if not type(qstr) in  (unicode, str):
-            raise TypeError('qstr is not type "unicode" or "str", intead is "%s"' % type(qstr))
-        msg('type solr_kwargs: %s' % type(solr_kwargs))
-
-        if not solr_kwargs in (dict, None):
-            raise TypeError('kwargs is not type "dict"')
-            
-        self.reset_errs()
+        """Executes solr search and returns a tuple:
+        
+        on success: (True, SolrResultsHandler)
+        on fail: (False, error message str)
+        """
+        assert type(qstr) in  (unicode, str)\
+                , 'qstr is not type "unicode" or "str", instead is "%s"' % type(qstr)
+        assert type(solr_kwargs) is (dict) or solr_kwargs is None\
+                , 'solr_kwargs is not type "dict" or value "None", instead is type "%s"' % type(solr_kwargs)
+                            
+        self.reset_search()
         
         if solr_kwargs is None:
             solr_kwargs = self.searchFormatter.get_solr_kwargs()
 
-        results = None
-        #msgt(qstr)
         try:
             results = self.solr_object.search(qstr, **solr_kwargs)
         except pysolr.SolrError as e:
             self.add_err('SOLR ERROR:\n%s' % str(e))    #'solr connection error')
-            return
+            return (False, 'SOLR ERROR:\n%s' % str(e))
 
-        if type(results) is not PySolrResults:
-           raise TypeError()        
-           add_err('Expected pysolr.Results object.  Received type: "%s"' % type(results))
-           return
+        assert type(results ) is PySolrResults\
+            , 'search_results is not type "PySolrResults", instead is type "%s"' % type(PySolrResults)
 
-        solr_results = SolrResultsHandler(results)
-        return solr_results
+        solr_results = SolrResultsHandler(results\
+                                        , self.searchFormatter.num_display_rows\
+                                        , self.searchFormatter.result_start_offset\
+                                        )
+        return (True, solr_results)
 
 if __name__=='__main__':
     ss = SolrSearcher()

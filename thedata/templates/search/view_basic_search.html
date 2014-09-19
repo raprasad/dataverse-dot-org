@@ -8,9 +8,20 @@
    <input type="submit" value="search" />
 
 </form>
+{% if ERR_FOUND %}
+    Sorry! The search service was not available.  Please try again.
+    {% if ERR_Msg %}
+    <p>{{ ERR_Msg }}</p>
+    {% endif %}
+{% endif %}
 {% if search_results %}
-<p><b>{{ search_results.hit_count }}</b> result{{ search_results.hit_count|pluralize }} 
-found for <b>{{ search_term }}</b></p>
+<p>
+    <b>{{ search_results.hit_count }}</b> result{{ search_results.hit_count|pluralize }} 
+found for <b>{{ display_search_term }}</b>.
+{% if search_results.get_num_display_docs > 0 %}
+    &nbsp; Displaying: <b>{{ search_results.get_num_display_docs }} result{{ search_results.get_num_display_docs|pluralize }}</b>
+{% endif %}
+</p>
     {% for doc in search_results.docs %}
        {% include "search/vcard.html" %}
     {% endfor %}
