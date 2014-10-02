@@ -6,4 +6,4 @@ xlrd==0.9.3	# excel read
 #xlwt
 django-model-utils==2.0.3
 logutils==0.3.3
-#South==0.8.4
+South==0.8.4

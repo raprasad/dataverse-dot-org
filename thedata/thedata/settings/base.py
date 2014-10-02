@@ -197,6 +197,7 @@ DJANGO_APPS = (
 
 # Apps specific for this project go here.
 LOCAL_APPS = (
+    'apps.basic_pages',
     'apps.search',
     #'apps.milestones',
 )
@@ -249,7 +250,7 @@ WSGI_APPLICATION = '%s.wsgi.application' % SITE_NAME
 # See: http://south.readthedocs.org/en/latest/installation.html#configuring-your-django-installation
 INSTALLED_APPS += (
     # Database migration helpers:
-    #'south',
+    'south',
 )
 # Don't need to use South when setting up a test database.
 SOUTH_TESTS_MIGRATE = False
